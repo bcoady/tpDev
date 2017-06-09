@@ -2,7 +2,7 @@
 
 A Vim plugin for the Fanuc TP language
 
-	TpDev creates a development environment for programming Fanuc robots
+  TpDev creates a development environment for programming Fanuc robots
 using the TP (teach pendant) language. This includes syntax highlighting,
 code snippets, tags, debugging, compiling, and viewing the program call structure.
 Some features are dependent on 3rd party plugins or software. Some
@@ -46,7 +46,7 @@ other OS, but open to forks.
 
 ## Help
 
- - in Vim	`:help tpDev`
+  in Vim	`:help tpDev`
 
 ## License ##
 
