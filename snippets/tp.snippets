@@ -1,14 +1,14 @@
 # MOTION COMMANDS
 snippet JP
-	:J P[${1}]
+	:J P[${1}] 
 snippet JPR
-	:J PR[${1}]
+	:J PR[${1}] 
 snippet JPF
-	:J P[${1}] ${2:100}% FINE
+	:J P[${1}] ${2:100}% FINE 
 snippet JPRF
-	:J PR[${1}] ${2:100}% FINE
+	:J PR[${1}] ${2:100}% FINE 
 snippet JPC
-	:J P[${1}] ${2:100}% CNT${3:100}
+	:J P[${1}] ${2:100}% CNT${3:100} 
 snippet JPRC
 	:J PR[${1}] ${2:100}% CNT${3:100} 
 snippet LP
@@ -54,15 +54,23 @@ snippet SPEED
 snippet VO
 	VOFFSET,VR[${1:1}] 
 snippet TO
+	Tool_Offset 
+snippet TOPR
 	Tool_Offset,PR[${1}] 
+snippet TOC
+	:  TOOL_OFFSET CONDITION PR[${1}];${0}
 snippet O
+	Offset 
+snippet OPR
 	Offset,PR[${1}] 
+snippet OC
+	:  OFFSET CONDITION PR[${1}];${0}
 snippet AP
 	AP_LD${1:50} 
 snippet RT
 	RT_LD${1:50} 
 snippet SKIP
-	SKIP, LBL[${1:404}], PR[${2:30}]=LPOS${0}
+	SKIP, LBL[${1:404}], PR[${2:30}]=LPOS${0} 
 # BRANCHING STATEMENTS
 snippet LBL
 	:  LBL[${1}];${0}

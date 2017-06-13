@@ -18,29 +18,29 @@ other OS, but open to forks.
 
  - Clone or copy tpDev into `vimfiles\bundle`
 
-## Dependencies (some have option to disable):
+## Dependencies (some can be disabled):
 
  - 	Windows		Command line is used for: Tag generation, Copy/Paste
 			Programs, TpTree Generation, Compiling programs
 
- - 	NERDTree	https://github.com/scrooloose/nerdtree
+ - 	[NERDTree](https://github.com/scrooloose/nerdtree)
 			Enabled by default, to disable:
 			set g:tpDevUseNERDTree = 0
 
- - 	AsyncRun	https://github.com/skywind3000/asyncrun.vim
+ - 	[AsyncRun](https://github.com/skywind3000/asyncrun.vim)
 			Enabled by default, to disable:
 			set g:tpDevUseAsyncRun = 0
 
- - 	SnipMate	https://github.com/garbas/vim-snipmate
+ - 	[SnipMate](https://github.com/garbas/vim-snipmate)
 			Required to use built in code snippets
 			Is automatically disabled if SnipMate is not installed
 			Code snippets located in tpDev\snippets\tp.snippets
 			
- - 	MakeTP		http://robot.fanucamerica.com/
+ - 	[MakeTP](http://robot.fanucamerica.com/)
 			Command line utility required to compile tp programs. 
 			Must be acquired from Fanuc by purchasing RoboGuide or OLPCPro.
 
- - 	AutoComplPop	https://github.com/vim-scripts/AutoComplPop
+ - 	[AutoComplPop](https://github.com/vim-scripts/AutoComplPop)
 			Optional but recommended
 			Very useful for autocompleting of words and code snippets
 
@@ -50,4 +50,5 @@ other OS, but open to forks.
 
 ## License ##
 
-MIT
+  TpDev is released under the MIT license.
+  See https://opensource.org/licenses/MIT

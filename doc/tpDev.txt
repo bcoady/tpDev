@@ -149,7 +149,6 @@ other OS, but open to forks.
 
 Author: Ben Coady
 Created: 4/19/2017
-Updated: 4/19/2017
 
 	1.0.0	Initial Stable release
 ==============================================================================
