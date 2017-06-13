@@ -146,11 +146,11 @@ fu! tpDev#CompileTP()
 		execute 'cd' g:tpDevDirMain
 
 		if g:tpDevUseAsyncRun
-			execute "AsyncRun maketp %:p" g:tpDevDirBin
+			execute "AsyncRun maketp \"" . expand('%:p') . "\" \"" .  g:tpDevDirBin . "\""
 			copen
 			wincmd p
 		else
-			execute "!maketp %:p" g:tpDevDirBin
+			execute "!maketp \"" . expand('%:p') . "\" \"" .  g:tpDevDirBin . "\""
 		endif
 	endif
 endfunction
