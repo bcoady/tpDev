@@ -36,7 +36,6 @@ call s:initVariable("g:tpDevCompileTp", "\"<F3>\"")
 
 " DEFAULTS: TpTree Key Mapping {{{1
 "============================================================
-call s:initVariable("g:tpDevSetMainProg", "\"<F6>\"")
 call s:initVariable("g:tpDevTpTreeOpenFold", "\"o\"")
 call s:initVariable("g:tpDevTpTreeOpenAllFolds", "\"O\"")
 call s:initVariable("g:tpDevTpTreeCloseFold", "\"c\"")
@@ -56,8 +55,5 @@ call s:initVariable("g:tpDevDirBin", "$vim")
 "============================================================
 call s:initVariable("g:tpDevTpTreeWidth", 30)
 call s:initVariable("g:tpDevMainProg", "\"a_main\"")
-if !exists("g:tpDevDirFilter")
-    let g:tpDevDirFilter = ['src', 'Projects', 'Backup']
-endif
 
 " vim: set fdm=marker:

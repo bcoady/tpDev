@@ -69,6 +69,7 @@ other OS, but open to forks.
 	---------			---------------		------------
 	g:tpDevCopyProgram		<space>c		copy current file to clipboard
 	g:tpDevPasteProgram		<space>p		paste clipboard to current directory
+	g:tpDevTpTreeToggle		<F5>			Toggle between NERDTree & TpTree
 ------------------------------------------------------------------------------
 3.2 TP filetype Mapping:
 	Variable			Default Mapping		Description
@@ -77,12 +78,10 @@ other OS, but open to forks.
 	g:tpDevRemark			<space>r		remark current line
 	g:tpDevLsClean			<space>ls		remove generated line numbers
 	g:tpDevCompileTp		<F3>			compile current file
-	g:tpDevSetMainProg		<F6>			set g:tpDevMainProg to current filename
 ------------------------------------------------------------------------------
 3.3 TpTree filetype Mapping:
 	Variable			Default Mapping		Description
 	---------			---------------		------------
-	g:tpDevTpTreeToggle		<F5>			Toggle between NERDTree & TpTree
 	g:tpDevTpTreeRefresh		r			refresh TpTree
 	g:tpDevTpTreeExpand		e			expand node 1 level down
 	g:tpDevTpTreeOpenNode		<cr>			open node file in right window
@@ -106,9 +105,6 @@ other OS, but open to forks.
 	Variable			Default 		Description
 	---------			---------------		------------
 	g:tpDevMainProg			"a_main"		regex match for main program search
-	g:tpDevDirFilter		['src', 'Projects, 'Backup']	Only allow TpTree and Tags 
-								to be built in directories that 
-								regex match an item on this list.
 	g:tpDevTpTreeWidth		30			Column width for TpTree
 	g:tpDevUseNERDTree		1			set to 0 to disable NerdTree depenecy
 	g:tpDevUseAsyncRun		1			set to 0 to disable AsyncRun depenecy
@@ -118,7 +114,11 @@ other OS, but open to forks.
 
 	Example setup:
 	----------------
-
+	"TpDev Settings
+	let g:tpDevDirMain = 'C:\Users\name\Projects'
+	let g:tpDevDirSrc = 'C:\Users\name\Projects\source'
+	let g:tpDevDirBin = 'C:\Users\name\Projects\binary'
+	
 	"NERDTree settings
 	let NERDTreeIgnore=['tags$', '\~$', '/*.TpTree']
 	
@@ -133,7 +133,7 @@ other OS, but open to forks.
 	nmap <c-cr> <c-T>
 
 	"VIM internal caps lock <c-^>
-	"TP files default to all caps
+	"TP files default to all caps by default
 	for c in range(char2nr('A'), char2nr('Z'))
 	  execute 'lnoremap ' . nr2char(c+32) . ' ' . nr2char(c)
  	 execute 'lnoremap ' . nr2char(c) . ' ' . nr2char(c+32)
@@ -149,6 +149,10 @@ other OS, but open to forks.
 
 Author: Ben Coady
 Created: 4/19/2017
+
+	1.0.1	Set main program to current TP program if no match
+		Fix snippet dictionary for AutoComplPop
+		Remove directory filter
 
 	1.0.0	Initial Stable release
 ==============================================================================

@@ -197,14 +197,6 @@ fu! tpDev#TpTreeToggle()
 	call s:TreeMain(0)
 endfunction
 
-" FUNCTION: TpTreeSetMain {{{2
-fu! tpDev#TpTreeSetMain()
-	if (&ft == 'tp')
-		let g:tpDevMainProg = expand('%:r')
-		echom "TpTree main program set to: " . g:tpDevMainProg
-	endif
-endfunction
-
 " FUNCTION: TreeExpand {{{2
 fu!	tpDev#TreeExpand()
 	if (&ft == 'TpTree')
@@ -242,38 +234,34 @@ fu! tpDev#TagMaker()
 		let origFile = expand('%')
 		let origView = winsaveview()
 		
-		if (s:CheckDirFilter())
-			let tagread = s:GetFileList()
-			e tags
-			
-			normal! ggdG
-			let item_cnt=0
-			for item in tagread
-				"set file name/type filters
-				if (item != 'tags')  && (item !~ '\.swp') && (item !~ '\~') && (item =~ '.ls')
-					call append(item_cnt, item . "\<tab>" . item . "\<tab>" . "/" . item)
-					let item_cnt += 1
-					execute "normal!" item_cnt . "gg"
-					"Trim ext on tag name
-					execute "normal! 0wde"
-					execute "normal!" item_cnt . "gg"
-					"Uppercase Tag name
-					execute "normal! 0vwU"
-					execute "normal!" item_cnt . "gg"
-					"Trim ext on tag command
-					execute "normal! $2bde"
-					execute "normal!" item_cnt . "gg"
-					"Uppercase tag command
-					execute "normal! $bvwU"
-				endif
-			endfor
+		let tagread = s:GetFileList()
+		e tags
+		
+		normal! ggdG
+		let item_cnt=0
+		for item in tagread
+			"set file name/type filters
+			if (item != 'tags')  && (item !~ '\.swp') && (item !~ '\~') && (item =~ '.ls')
+				call append(item_cnt, item . "\<tab>" . item . "\<tab>" . "/" . item)
+				let item_cnt += 1
+				execute "normal!" item_cnt . "gg"
+				"Trim ext on tag name
+				execute "normal! 0wde"
+				execute "normal!" item_cnt . "gg"
+				"Uppercase Tag name
+				execute "normal! 0vwU"
+				execute "normal!" item_cnt . "gg"
+				"Trim ext on tag command
+				execute "normal! $2bde"
+				execute "normal!" item_cnt . "gg"
+				"Uppercase tag command
+				execute "normal! $bvwU"
+			endif
+		endfor
 
-			update
-			execute "e " . origFile
-			call winrestview(origView)
-		else
-			echom "Must be in src, project, or backup folder!"
-		endif
+		update
+		execute "e " . origFile
+		call winrestview(origView)
 	endif
 endfunction
 
@@ -339,81 +327,88 @@ fu!	s:TreeMain(refresh)
 
 		let fileList = s:GetFileList()
 
-		if (s:CheckDirFilter())
-	
-			"Find main program
-		let mainProgRegex = g:tpDevMainProg . ".*\.ls$"
-			for item in fileList
-				if (item =~ mainProgRegex)
-					let MainProg = item
-				endif
-			endfor
+		let MainProg = s:FindMainProg(fileList)
 
-			if (MainProg != "")
+		if (MainProg != "")
 
-				let mainTag = toupper(MainProg)
-				let mainTag = s:StripExtension(mainTag)
+			let mainTag = toupper(MainProg)
+			let mainTag = s:StripExtension(mainTag)
+			let g:tpDevMainProg = mainTag
 
-				execute "e " . MainProg
+			execute "e " . MainProg
 
-				let TreeList = s:TreeBuild()
-	
-				"Create Structure file
-				setlocal nosplitright
-				vsplit a_main.TpTree
-				setlocal splitright
+			let TreeList = s:TreeBuild()
+
+			"Create Structure file
+			setlocal nosplitright
+			vsplit a_main.TpTree
+			setlocal splitright
+			setlocal modifiable
+			execute "normal! ggdG"
+
+			call append(0, "===========================")
+			call append(0, TreeList)
+			execute "normal! Gdd"
+			call s:TreeExpandFirst()
+			call append(0, "===========================")
+			call append(0, mainTag)
+			call append(0, "===========================")
+			call append(0, "========   Tree   ========")
+			call append(0, "==========  TP  ==========")
+			call s:SyntaxLoopInit(fileList)
+
+			let unusedList = s:GetUnusedPrograms(fileList)
+			if len(unusedList) > 0
 				setlocal modifiable
-				execute "normal! ggdG"
-
-				call append(0, "===========================")
-				call append(0, TreeList)
-				execute "normal! Gdd"
-				call s:TreeExpandFirst()
-				call append(0, "===========================")
-				call append(0, mainTag)
-				call append(0, "===========================")
-				call append(0, "========   Tree   ========")
-				call append(0, "==========  TP  ==========")
-				call s:SyntaxLoopInit(fileList)
-
-				let unusedList = s:GetUnusedPrograms(fileList)
-				if len(unusedList) > 0
-					setlocal modifiable
-					call append(line('$'), "======== Unlisted: ========")
-					call append(line('$'), unusedList)
-				endif
-
-				execute "normal! gg"
-				execute "normal! zM"
-				update
-				setlocal nomodifiable
-
-				let totalWin = winnr('$')
-				let winCnt = totalWin-1
-				while winCnt > 0
-					execute winCnt . " wincmd w"
-					if (&ft != 'TpTree')
-						execute "silent " . winCnt . " close!"
-					endif
-					let winCnt -= 1
-				endwhile
-
-				wincmd b
-				if (&ft != 'TpTree' && origFile != '')
-					execute "b " . origFile
-				endif
-
-				execute "1 wincmd w"
-				execute "vert resize" . g:tpDevTpTreeWidth
-				setlocal winfixwidth
-			else
-				echoerr "Did not find " . g:tpDevMainProg . " program!"
-
+				call append(line('$'), "======== Unlisted: ========")
+				call append(line('$'), unusedList)
 			endif
+
+			execute "normal! gg"
+			execute "normal! zM"
+			update
+			setlocal nomodifiable
+
+			let totalWin = winnr('$')
+			let winCnt = totalWin-1
+			while winCnt > 0
+				execute winCnt . " wincmd w"
+				if (&ft != 'TpTree')
+					execute "silent " . winCnt . " close!"
+				endif
+				let winCnt -= 1
+			endwhile
+
+			wincmd b
+			if (&ft != 'TpTree' && origFile != '')
+				execute "b " . origFile
+			endif
+
+			execute "1 wincmd w"
+			execute "vert resize" . g:tpDevTpTreeWidth
+			setlocal winfixwidth
 		else
-			echoerr "Must be in src, project, or backup folder!"
+			echoerr "Did not find " . g:tpDevMainProg . " program!"
+
 		endif
     	endif
+endfunction
+
+" FUNCTION: FindMainProg {{{2
+fu!	s:FindMainProg(fileList)
+	
+	let MainProg = ""
+	let mainProgRegex = g:tpDevMainProg . ".*\.ls$"
+		for item in a:fileList
+			if (item =~ mainProgRegex)
+				let MainProg = item
+			endif
+		endfor
+
+	if (MainProg == "") && (&ft == 'tp') && (expand('%') =~ ".*\.ls$")
+			let MainProg = expand('%')
+	endif
+	return MainProg
 endfunction
 
 " FUNCTION: TreeBuild {{{2
@@ -700,19 +695,6 @@ fu! s:GetExtension(name)
 		let ext = ""
 	endif
 	return ext
-endfunction
-" FUNCTION: CheckDirFilter {{{2
-fu! s:CheckDirFilter()
-	let dirOk = 0
-	let curDir = getcwd()
-
-	for dirFilter in g:tpDevDirFilter
-		if curDir =~ dirFilter
-			let dirOk = 1
-		endif
-	endfor
-
-	return dirOk
 endfunction
 
 " vim: set fdm=marker:
