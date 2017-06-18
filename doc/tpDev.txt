@@ -73,9 +73,15 @@ intentions to adapt to other OS, but open to forks.
 	Debugging	Notifies user of missing program headers. Automatically fixes missing colons and semicolons.
 			More development to come on this.
 
-	Compiling	Runs the Fanuc MakeTP utility to compile the current
-			*.ls file to a *.tp file. The compiled file is placed in the \bin folder which
-			must can be specified with the tpDev location variable |tpDevOptions|. 
+	Copy/Paste	Copy records the current file path. (See |tpDevMapping| for keystrokes)
+			Paste uses windows command line to paste the file to the current directory.
+			You will be prompted to type a new name or keep the original. If the file type
+			is *.ls, it will automatically rename the program name header as well. The
+			file type extension does not need to be typed, unless you want to change it. 
+			
+	Compiling	Runs the Fanuc MakeTP utility to compile the current *.ls file to a *.tp file.
+			The compiled file is placed in the \bin folder which
+			can be specified with the tpDev location variable |tpDevOptions|. 
 			If the AsyncRun plugin is installed it will be run in the background and allow you
 			to continue working. The quickfix window will open when it is complete and notify of any
 			compile errors. MakeTP is a Fanuc utility that is included with the purchase
