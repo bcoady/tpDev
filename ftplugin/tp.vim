@@ -8,7 +8,9 @@ let b:loaded_tpDevFtpluginTp = 1
 "Generate tags after writing file
 augroup AutoTP
 	autocmd!
+	autocmd BufEnter *.ls :call tpDev#ReplaceData()
 	autocmd BufWritePost *.ls :call tpDev#TagMaker()
+	autocmd BufWritePost *.ls :call tpDev#ReplaceData()
 augroup END
 
 "Add snippets to dictionary for use with AutoComplPop

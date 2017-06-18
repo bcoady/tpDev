@@ -300,6 +300,87 @@ fu! tpDev#TreeEnter()
 endfunction
 
 
+" FUNCTION: ReplaceData {{{2
+fu! tpDev#ReplaceData()
+	let origFile = expand('%')
+	let origLine = line('.')
+
+	let DataFile = s:FindDataFile()
+	if DataFile != ""
+		execute "e " . DataFile
+		execute "normal! gg"
+		execute "normal! 0"
+		let xlist = []
+		let lnum = 1
+		let lastLine = line('$')
+	
+		"Build array of Data Variables
+		while (lnum <= lastLine)
+			let templist = []
+			let CurLine = line('.')
+
+			"Check for correct # of words
+			execute "normal! 4w"
+			if line('.') == CurLine
+				execute "normal! 0"
+	
+	
+				let tempword0 = expand("<cword>")
+				execute "normal! 2w"
+				let tempword1 = expand("<cword>")
+				execute "normal! 2w"
+				let tempword2 = expand("<cword>")
+	
+				"Verify words are not duplicates, indicating missing
+				"data
+				if tempword0 != tempword1 && tempword1 != tempword2 && tempword2 != tempword0
+					call add(templist, tempword0)
+					call add(templist, tempword1)
+					call add(templist, tempword2)
+	
+	
+					call add(xlist, templist)
+				else
+					echoerr DataFile . " has an error on line " . CurLine
+
+				endif
+			else
+				echoerr DataFile . " has an error on line " . CurLine
+			endif
+
+			execute "normal! " . CurLine . "gg"
+			execute "normal! j"
+			execute "normal! 0"
+			let lnum += 1
+		endwhile
+	
+		execute "e " . origFile
+	
+		"Iterate through each variable & substitute
+		let listLength = len(xlist)
+		let item = 0
+		while item < listLength
+	
+			let listi = xlist[item]
+			if len(listi)==3
+				let listType = listi[0]
+				let listNum = listi[1]
+				let listComment = listi[2]
+
+	
+				execute "silent" ':%s/' . listType . '.'  . listComment . '/' . listType . '\[' . listNum . ':' . listComment . '\]/gei'
+			endif
+	
+			let item += 1
+		endwhile
+	
+		execute "normal! " . origLine . "gg"
+	
+	endif
+	
+	
+endfunction
+
 " SECTION: Local Functions {{{1
 "============================================================
 " FUNCTION: TreeMain {{{2
@@ -392,6 +473,21 @@ fu!	s:TreeMain(refresh)
 
 		endif
     	endif
+endfunction
+
+" FUNCTION: FindDataFile {{{2
+fu!	s:FindDataFile()
+	
+	let fileList = s:GetFileList()
+	let DataFile = ""
+	let DataFileRegex = g:tpDevDataFile . ".*\.csv$"
+		for item in fileList
+			if (item =~ DataFileRegex)
+				let DataFile = item
+			endif
+		endfor
+
+	return DataFile
 endfunction
 
 " FUNCTION: FindMainProg {{{2

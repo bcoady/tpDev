@@ -55,5 +55,6 @@ call s:initVariable("g:tpDevDirBin", "$vim")
 "============================================================
 call s:initVariable("g:tpDevTpTreeWidth", 30)
 call s:initVariable("g:tpDevMainProg", "\"a_main\"")
+call s:initVariable("g:tpDevDataFile", "\"data\"")
 
 " vim: set fdm=marker:
