@@ -68,7 +68,7 @@ intentions to adapt to other OS, but open to forks.
 			The data.csv file must be in the same folder as your program and the name must
 			be of the format data*.csv, so data_project1.csv will work. The comment must 
 			contain only alphanumeric characters and no spaces. If you have AutoComplPop
-			then it will autocomplete your variable names (smartcase will apply if set). 
+			then it will autocomplete your variable names.
 
 	Debugging	Notifies user of missing program headers. Automatically fixes missing colons and semicolons.
 			More development to come on this.

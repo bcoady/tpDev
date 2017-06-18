@@ -4,6 +4,9 @@ if exists('b:loaded_tpDevFtpluginTp')
 endif
 let b:loaded_tpDevFtpluginTp = 1
 
+"Case SETTINGS
+setlocal ignorecase
+setlocal nosmartcase
 
 "Generate tags after writing file
 augroup AutoTP
