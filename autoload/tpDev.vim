@@ -319,7 +319,7 @@ fu! tpDev#ReplaceData()
 			let templist = []
 			let CurLine = line('.')
 
-			"Check for correct # of words
+			"Skip if line doesn't contain 5 words
 			execute "normal! 4w"
 			if line('.') == CurLine
 				execute "normal! 0"
@@ -331,21 +331,15 @@ fu! tpDev#ReplaceData()
 				execute "normal! 2w"
 				let tempword2 = expand("<cword>")
 	
-				"Verify words are not duplicates, indicating missing
-				"data
-				if tempword0 != tempword1 && tempword1 != tempword2 && tempword2 != tempword0
+				"Verify correct data format
+				if tempword0 =~ '^\a\+$' && tempword1 =~ '^\d\+$' && tempword2 =~ '^\w\+$'
 					call add(templist, tempword0)
 					call add(templist, tempword1)
 					call add(templist, tempword2)
 	
-	
 					call add(xlist, templist)
-				else
-					echoerr DataFile . " has an error on line " . CurLine
 
 				endif
-			else
-				echoerr DataFile . " has an error on line " . CurLine
 			endif
 
 			execute "normal! " . CurLine . "gg"
@@ -356,7 +350,7 @@ fu! tpDev#ReplaceData()
 	
 		execute "e " . origFile
 	
-		"Iterate through each variable & substitute
+		"Iterate through each variable
 		let listLength = len(xlist)
 		let item = 0
 		while item < listLength
@@ -368,7 +362,25 @@ fu! tpDev#ReplaceData()
 				let listComment = listi[2]
 
 	
-				execute "silent" ':%s/' . listType . '.'  . listComment . '/' . listType . '\[' . listNum . ':' . listComment . '\]/gei'
+				"Find data without numbers
+				execute "silent" ':%s/\(\A\)' . listType . '\[' . listComment . '\]/\1'  . listType . '\[' . listNum . ':' . listComment . '\]/gei'
+
+				"Find elemental PR's without numbers
+				execute "silent" ':%s/\(\A\)' . listType . '\[' . listComment . ',\(\d\)\]/\1'  . listType . '\[' . listNum . ',\2:' . listComment . '\]/gei'
+
+				"Find data without comments
+				execute "silent" ':%s/\(\A\)' . listType . '\[' . listNum . '\]/\1' . listType . '\[' . listNum . ':' . listComment . '\]/gei'
+
+				"Find elemental PR's without comments
+				execute "silent" ':%s/\(\A\)' . listType . '\[' . listNum . ',\(\d\)\]/\1' . listType . '\[' . listNum . ',\2:' . listComment . '\]/gei'
+
+				"Update comments
+				execute "silent" ':%s/\(\A\)' . listType . '\[' . listNum . '\:.\{-}\]/' . '\1' . listType . '\[' . listNum . ':' . listComment . '\]/gei'
+
+				"Update comments for elemental PR's
+				execute "silent" ':%s/\(\A\)' . listType . '\[' . listNum . ',\(\d\)\:.\{-}\]/' . '\1' . listType . '\[' . listNum . ',\2:' . listComment . '\]/gei'
+
+
 			endif
 	
 			let item += 1
