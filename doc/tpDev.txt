@@ -54,7 +54,7 @@ intentions to adapt to other OS, but open to forks.
 			Any data that is like "TYPE[#:Comment]" can be used. 
 			"TYPE[Comment]" or "TYPE[#]" will automatically be replaced by "TYPE[#:Comment]".
 			For example: enter "RO[GripperClose]=ON" or "RO[1]=ON" and it is replaced with
-			"RO[1:GripperClose]=ON". The function runs when a TP file is opened or saved.
+			"RO[1:GripperClose]=ON". The function runs when a TP file is saved.
 			This eliminates needing to remember which numbers you assigned to each I/O or Register.
 			Comments will be automatically updated if changed.
 
@@ -188,6 +188,9 @@ intentions to adapt to other OS, but open to forks.
 
 	Example setup:
 	---------------- >
+	set hidden
+	set autochdir	
+
 	"TpDev Settings
 	let g:tpDevDirMain = 'C:\Users\name\Projects'
 	let g:tpDevDirSrc = 'C:\Users\name\Projects\source'
@@ -224,6 +227,10 @@ intentions to adapt to other OS, but open to forks.
 
 Author: Ben Coady
 Created: 4/19/2017
+
+	1.2.0	Fixed incompatiblity with TpTree and ReplaceData
+		ReplaceData only updates on a file write
+		Added set hidden and autochdir forced setting	
 
 	1.1.1	Updated DataReplace to fill in numbers or Comments and
 		will support elemental PR's
