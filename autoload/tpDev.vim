@@ -158,7 +158,7 @@ endfunction
 " FUNCTION: CopyProgram {{{2
 fu! tpDev#CopyProgram()
 		let g:tpDevCopyPath = expand('%:p')
-		let g:tpDevCopyName = expand('%')
+		let g:tpDevCopyName = expand('%:t')
 		let g:tpDevCopyExt = expand('%:e')
 		echom g:tpDevCopyName . " is copied to the clipboard."
 endfunction
@@ -180,8 +180,8 @@ fu! tpDev#PasteProgram()
 	execute "silent ! copy \"" . g:tpDevCopyPath . "\" \"" . pastePath . "\""
 	wincmd b
 	execute "e " . pastePath
-	if (newName =~ expand('%') && &ft == 'tp')
-		let progName = toupper(expand('%:r'))
+	if (newName =~ expand('%:t') && &ft == 'tp')
+		let progName = toupper(expand('%:t:r'))
 		execute "normal! gg2wC" . progName
 	endif
 	update
@@ -195,16 +195,21 @@ endfunction
 " FUNCTION: TpTreeToggle {{{2
 fu! tpDev#TpTreeToggle()
 	call s:TreeMain(0)
+
 endfunction
 
 " FUNCTION: TreeExpand {{{2
 fu!	tpDev#TreeExpand()
+	call s:HiddenStart()
+
 	if (&ft == 'TpTree')
 		
+		call s:GetSetCD()
 		if foldclosed('.') > 0
 			execute "normal! zo"
 		endif
 
+		execute "normal! 0"
 		let curWord = expand("<cword>")
 
 		if !s:TreeItemIsRecursive() && curWord !~ g:tpDevMainProg
@@ -225,13 +230,14 @@ fu!	tpDev#TreeExpand()
 			endif
 		endif
 	endif
+	call s:HiddenEnd()
 endfunction
 
 " FUNCTION: TagMaker {{{2
 fu! tpDev#TagMaker()
 	if (&ft == 'tp')
-		let cur_dir = getcwd()
-		let origFile = expand('%')
+		let cur_dir = s:GetSetCD()
+		let origFile = expand('%:t')
 		let origView = winsaveview()
 		
 		let tagread = s:GetFileList()
@@ -268,7 +274,7 @@ endfunction
 " FUNCTION: TreeNodeOpen {{{2
 fu! tpDev#TreeNodeOpen()
 	let openProg = expand('<cword>') . ".ls"
-	let curDir = getcwd()
+	let curDir = s:GetSetCD()
 	if filereadable(openProg) 
 		let curWin = winnr()
 		wincmd b
@@ -302,7 +308,7 @@ endfunction
 
 " FUNCTION: ReplaceData {{{2
 fu! tpDev#ReplaceData()
-	let origFile = expand('%')
+	let origFile = expand('%:t')
 	let origLine = line('.')
 
 	let DataFile = s:FindDataFile()
@@ -398,6 +404,8 @@ endfunction
 " FUNCTION: TreeMain {{{2
 fu!	s:TreeMain(refresh)
 
+	call s:HiddenStart()
+
 	" Toggle between TpTree and NerdTree
 	let bnr = bufwinnr('*.TpTree')
     	if (bnr > 0 && a:refresh == 0)
@@ -408,12 +416,12 @@ fu!	s:TreeMain(refresh)
 
     	else
 		
-		let cur_dir = getcwd()
 		let MainProg = ""
 
 		let origWin = winnr()
 		wincmd b
-		let origFile = expand('%')
+		let origFile = expand('%:t')
+		let cur_dir = s:GetSetCD()
 		execute origWin . " wincmd w"
 
 		execute "cd " . cur_dir
@@ -485,6 +493,8 @@ fu!	s:TreeMain(refresh)
 
 		endif
     	endif
+
+	call s:HiddenEnd()
 endfunction
 
 " FUNCTION: FindDataFile {{{2
@@ -513,8 +523,8 @@ fu!	s:FindMainProg(fileList)
 			endif
 		endfor
 
-	if (MainProg == "") && (&ft == 'tp') && (expand('%') =~ ".*\.ls$")
-			let MainProg = expand('%')
+	if (MainProg == "") && (&ft == 'tp') && (expand('%:t') =~ ".*\.ls$")
+			let MainProg = expand('%:t')
 	endif
 	return MainProg
 endfunction
@@ -614,6 +624,7 @@ fu! s:TreeItemIsRecursive()
 			let curIndent = foldlevel('.')
 
 			if (curIndent < lastIndent)
+				execute "normal! 0"
 				let tempString = expand("<cword>")
 				call add(parents, tempString)
 			endif
@@ -727,14 +738,18 @@ endfunction
 
 " FUNCTION: RefreshUnlisted {{{2
 fu! s:RefreshUnlisted()
-	let unlistedStart = search("Unlisted:") + 1
-	execute "normal! " . unlistedStart . "gg"
-	setlocal modifiable
-	execute "normal! dG"
-	let fileList = s:GetFileList()
-	let unusedList = s:GetUnusedPrograms(fileList)
-	if len(unusedList) > 0
-		call append(line('$'), unusedList)
+	let unlistedStart = search("Unlisted:")
+	if unlistedStart > 0
+		let unlistedStart += 1
+		let unlistedStart = search("Unlisted:") + 1
+		execute "normal! " . unlistedStart . "gg"
+		setlocal modifiable
+		execute "normal! dG"
+		let fileList = s:GetFileList()
+		let unusedList = s:GetUnusedPrograms(fileList)
+		if len(unusedList) > 0
+			call append(line('$'), unusedList)
+		endif
 	endif
 endfunction
 
@@ -803,6 +818,26 @@ fu! s:GetExtension(name)
 		let ext = ""
 	endif
 	return ext
+endfunction
+
+" FUNCTION: GetSetCD {{{2
+fu! s:GetSetCD()
+	let curDir = expand('%:p:h')
+	execute "cd " . curDir
+	return curDir
+endfunction
+
+" FUNCTION: HiddenStart {{{2
+fu! s:HiddenStart()
+	let g:tpDevHiddenSet = &hidden
+	set hidden
+endfunction
+
+" FUNCTION: HiddenEnd {{{2
+fu! s:HiddenEnd()
+	if !g:tpDevHiddenSet
+		set nohidden
+	endif
 endfunction
 
 " vim: set fdm=marker:

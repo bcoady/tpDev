@@ -5,9 +5,6 @@ if exists('g:loaded_tpDevPlugin')
 endif
 let g:loaded_tpDevPlugin = 1
 
-"Needed to work correctly
-set autochdir
-set hidden
 
 " FUNCTION: Initialize Global Variables {{{1
 "============================================================

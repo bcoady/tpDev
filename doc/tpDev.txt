@@ -188,8 +188,6 @@ intentions to adapt to other OS, but open to forks.
 
 	Example setup:
 	---------------- >
-	set hidden
-	set autochdir	
 
 	"TpDev Settings
 	let g:tpDevDirMain = 'C:\Users\name\Projects'
@@ -227,6 +225,8 @@ intentions to adapt to other OS, but open to forks.
 
 Author: Ben Coady
 Created: 4/19/2017
+
+	1.2.1	Eliminated dependency on autochdir & Hidden
 
 	1.2.0	Fixed incompatiblity with TpTree and ReplaceData
 		ReplaceData only updates on a file write
