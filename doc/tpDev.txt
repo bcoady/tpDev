@@ -73,6 +73,8 @@ intentions to adapt to other OS, but open to forks.
 			contain only alphanumeric characters and no spaces. If you have AutoComplPop
 			then it will autocomplete your variable names.
 
+	DataGrep	Allows user to search for all instances of robot data or IO in in an entire folder of *.ls files.
+
 	Debugging	Notifies user of missing program headers. Automatically fixes missing colons and semicolons.
 			More development to come on this.
 
@@ -151,6 +153,7 @@ intentions to adapt to other OS, but open to forks.
 	g:tpDevRemark			<space>r		remark current line
 	g:tpDevLsClean			<space>ls		remove generated line numbers
 	g:tpDevCompileTp		<F3>			compile current file
+	g:tpDevDataGrep			<space>dg		Search for IO/Data use in a folder
 ------------------------------------------------------------------------------
 3.3 TpTree filetype Mapping:
 	Variable			Default Mapping		Description
@@ -225,6 +228,7 @@ intentions to adapt to other OS, but open to forks.
 
 Author: Ben Coady
 Created: 4/19/2017
+	1.3.0	Added DataGrep function
 
 	1.2.1	Eliminated dependency on autochdir & Hidden
 

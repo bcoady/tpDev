@@ -24,3 +24,4 @@ execute "nnoremap <silent> <buffer> ". g:tpDevTppDebug ." :call tpDev#TppDebug()
 execute "nnoremap <silent> <buffer> ". g:tpDevRemark ." :call tpDev#Remark()<cr>"
 execute "nnoremap <silent> <buffer> ". g:tpDevLsClean ." :call tpDev#LsClean()<cr>"
 execute "nnoremap <silent> <buffer> ". g:tpDevCompileTp ." :call tpDev#CompileTP()<cr>"
+execute "nnoremap <silent> <buffer> ". g:tpDevDataGrep ." :call tpDev#DataGrep()<cr>"

@@ -34,6 +34,7 @@ call s:initVariable("g:tpDevTppDebug", "\"<space>tp\"")
 call s:initVariable("g:tpDevRemark", "\"<space>r\"")
 call s:initVariable("g:tpDevLsClean", "\"<space>ls\"")
 call s:initVariable("g:tpDevCompileTp", "\"<F3>\"")
+call s:initVariable("g:tpDevDataGrep", "\"<space>dg\"")
 
 " DEFAULTS: TpTree Key Mapping {{{1
 "============================================================

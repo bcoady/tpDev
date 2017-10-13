@@ -399,6 +399,89 @@ fu! tpDev#ReplaceData()
 	
 endfunction
 
+" FUNCTION: CodeSniffProject {{{2
+fu! tpDev#CodeSniffProject()
+	if (&ft == 'tp')
+		let origView = winsaveview()
+		let origFile = expand('%:t')
+
+		let fileList = s:GetFileList()
+
+		let g:tpDevCodeScore = 0.0
+		let g:tpDevCodeCount = 0
+		let g:tpDevTotalCount = 0
+		let g:tpDevCodeIssue = []
+
+		for item in fileList
+			call s:SniffProgram(item, 1)
+		endfor
+
+		execute "e " . origFile
+		call winrestview(origView)
+
+		let score = g:tpDevCodeScore/g:tpDevTotalCount
+		echohl ErrorMsg
+		echom "Results of Code Analysis:"
+		echohl WarningMsg
+	       	echom "Overall score is " . string(score)
+		echom "Lines of code in project: " . g:tpDevCodeCount
+
+		if score >= 85
+			echom "Good work!"
+		endif
+
+		if len(g:tpDevCodeIssue) > 0
+			echom "Programs that need attention:"
+			for items in g:tpDevCodeIssue
+				echom items
+			endfor
+		endif
+
+		echohl None
+
+		call input('Press any key to continue')
+	endif
+endfunction
+
+" FUNCTION: CodeSniffFile {{{2
+fu! tpDev#CodeSniffFile()
+		let origView = winsaveview()
+		let origFile = expand('%:t')
+
+		let g:tpDevCodeScore = 0.0
+		let g:tpDevCodeCount = 0
+		let g:tpDevTotalCount = 0
+		let g:tpDevCodeIssue = []
+
+		call s:SniffProgram(origFile, 0)
+
+		call winrestview(origView)
+endfunction
+
+" FUNCTION: DataGrep {{{2
+fu! tpDev#DataGrep()
+	if (&ft == 'tp')
+		let ext = expand('%:e')
+		call inputsave()
+		let searchType = input('Enter a data type:')
+		if searchType == ''
+			let searchType = 'R'
+		endif
+		let searchNumberIn = input('Enter [number][indirect][all]: ')
+		if searchNumberIn =~ '^i'
+			let searchNumber = ''
+		elseif searchNumberIn =~ '^a'
+			let searchNumber = '.*\d'
+		else
+			let searchNumber = searchNumberIn
+		endif
+		let searchTerm = searchType . '\[' . searchNumber . '\D'
+		call inputrestore()
+		cexpr []
+		execute 'vimgrep /' . searchTerm . '/j **/*.' . ext . ' | cw'
+	endif
+endfunction
+
 " SECTION: Local Functions {{{1
 "============================================================
 " FUNCTION: TreeMain {{{2
@@ -838,6 +921,185 @@ fu! s:HiddenEnd()
 	if !g:tpDevHiddenSet
 		set nohidden
 	endif
+endfunction
+
+
+" FUNCTION: SniffProgram {{{2
+fu! s:SniffProgram(fileItem, silentStats)
+	call s:HiddenStart()
+	if s:GetExtension(a:fileItem) == "ls"
+		if expand('%:t') != a:fileItem
+			execute "e " . a:fileItem
+		endif
+		execute "normal! gg"
+	
+		let h_mn = search("/MN")
+		let h_pos = search("/POS")
+	
+		if (h_mn != 0) && (h_pos != 0)
+			let h_mn += 1
+			let h_pos -= 1
+			let lines = getline(h_mn, h_pos)
+	
+			let commentLines = 0
+			let blankLines = 0
+			let codeLines = 0
+			let jmpLines = 0
+			let lblLines = 0
+			let jmpScore = 0
+			let ifLines = 0
+			let forLines = 0
+	
+			for i in lines
+	
+				let isComment = 0
+				let isBlank = 0
+				let isCode = 0
+				let isJmp = 0
+				let isLbl = 0
+				let isIf = 0
+				let isFor = 0
+	
+	
+				"Count blank lines
+				if (i =~ '^\s*\d*:\s*;')
+					let blankLines += 1
+					let isBlank = 1
+				endif
+	
+				"Count comment lines
+				if (i =~ '^\s*\d*:\s*!') || (i =~ '--eg:')
+					let commentLines += 1
+					let isComment = 1
+				endif
+	
+				"Count code lines
+				if !isBlank && !isComment
+					let codeLines += 1
+					let isCode = 1
+				endif
+	
+				"Determine type of code line
+				if isCode
+					"Count jump lines
+					if i =~ 'JMP LBL'
+						let jmpLines += 1
+						let isJmp = 1
+					endif
+	
+					"Count label lines
+					if !isJmp && i =~ '\sLBL'
+						let lblLines += 1
+						let isLbl = 1
+					endif
+	
+					"Count if lines
+					if !isJmp && i =~ '\sIF'
+						let ifLines += 1
+						let isIf = 1
+					endif
+	
+					"Count for lines
+					if i =~ '\sFOR'
+						let forLines += 1
+						let isFor = 1
+					endif
+				endif
+			endfor
+	
+	
+			"Calculate statistics
+			let totalLines = h_pos - h_mn + 1
+
+			let issueCode = 0
+			let issueMinComment = 0
+			let issueMaxComment = 0
+			let issueControl = 0
+
+			if jmpLines > lblLines
+				let jmpScore = jmpLines
+			else
+				let jmpScore = lblLines
+			endif
+			let controlLines = jmpScore + ifLines + forLines
+	
+			"Calculate Score, max of 100
+			let score = 100.0
+	
+			"Too much code in 1 subprogram
+			if codeLines > 30
+			       let penalty = codeLines - 30
+			       let score -= (penalty / 2)
+			       let issueCode = 1
+		       	endif
+	
+			"Too many or too few comments/blank lines
+			if totalLines > 10
+				let minLines = codeLines / 0.9
+				let maxLines = codeLines / 0.6
+				let penalty = 0
+				
+				if totalLines < minLines
+					let penalty = minLines - totalLines
+					let issueMinComment = 1
+				endif
+	
+				if totalLines > maxLines
+					let penalty = totalLines - maxLines
+					let issueMaxComment = 1
+				endif
+	
+				let score -= (penalty / 2)
+			endif
+	
+			"Too many controls
+		       	if controlLines > 2
+			       let penalty = 5 * (controlLines - 2)
+			       let score -= penalty
+			       let issueControl = 1
+		       	endif
+	
+			"Minimum score of 0 per program
+			if score < 0
+				let score = 0
+			endif
+	
+			if score < 70
+				call add(g:tpDevCodeIssue, a:fileItem)
+			endif
+	
+			let g:tpDevCodeScore += score * totalLines
+			let g:tpDevTotalCount += totalLines
+			let g:tpDevCodeCount += codeLines
+	
+			if !a:silentStats
+				echohl ErrorMsg
+				echom "Score of " . a:fileItem " is: " . string(score)
+				echohl WarningMsg
+				echom "Lines of Code in file: " . codeLines
+
+				if issueCode || issueMinComment || issueMaxComment || issueControl
+					echom "Points were deducted for: "
+					if issueCode
+						echom "Too much code in a single program"
+					endif
+					if issueMinComment
+						echom "Not enough comments"
+					endif
+					if issueMaxComment
+						echom "Too many comments and blank lines"
+					endif
+					if issueControl
+						echom "Too much complexity in a single program"
+					endif
+
+				endif
+				echohl None
+				call input('Press any key to continue')
+			endif
+		endif
+	endif
+	call s:HiddenEnd()
 endfunction
 
 " vim: set fdm=marker:

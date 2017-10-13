@@ -170,4 +170,9 @@ hi def link     tpRemark            Comment
 syn keyword     tpHeader            OWNER ASCBIN MNEDITOR COMMENT PROG_SIZE CREATE DATE TIME MODIFIED FILE_NAME VERSION LINE_COUNT MEMORY_SIZE PROTECT READ_WRITE TCD STACK_SIZE TASK_PRIORITY TIME_SLICE BUSY_LAMP_OFF ABORT_REQUEST PAUSE_REQUEST DEFAULT_GROUP CONTROL_CODE AUTO_SINGULARITY_HEADER ENABLE_SINGULARITY_AVOIDANCE
 hi def link     tpHeader            Define
 
+" TODO's
+syn match	tpTodo		   /.*TODO.*/
+syn match	tpTodo		   /.*FIXME.*/
+hi def link	tpTodo		   Todo
+
 let b:current_syntax = "tp"
