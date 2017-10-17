@@ -4,6 +4,7 @@ if exists('g:loaded_tpDevPlugin')
 	finish
 endif
 let g:loaded_tpDevPlugin = 1
+let g:tpDev_path = expand('<sfile>:p:h:h')
 
 
 " FUNCTION: Initialize Global Variables {{{1
@@ -34,7 +35,12 @@ call s:initVariable("g:tpDevTppDebug", "\"<space>tp\"")
 call s:initVariable("g:tpDevRemark", "\"<space>r\"")
 call s:initVariable("g:tpDevLsClean", "\"<space>ls\"")
 call s:initVariable("g:tpDevCompileTp", "\"<F3>\"")
-call s:initVariable("g:tpDevDataGrep", "\"<space>dg\"")
+call s:initVariable("g:tpDevDataGrep", "\"<space>xr\"")
+
+" DEFAULTS: TP Command Assignment {{{1
+"============================================================
+call s:initVariable("g:tpDevQuickHelpCom", "\"TPhelp\"")
+execute "command! " . g:tpDevQuickHelpCom . " call tpDev#QuickHelp()"
 
 " DEFAULTS: TpTree Key Mapping {{{1
 "============================================================

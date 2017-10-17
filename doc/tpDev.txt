@@ -145,6 +145,8 @@ intentions to adapt to other OS, but open to forks.
 	g:tpDevCopyProgram		<space>c		copy current file to clipboard
 	g:tpDevPasteProgram		<space>p		paste clipboard to current directory
 	g:tpDevTpTreeToggle		<F5>			Toggle between NERDTree & TpTree
+	g:tpDevQuickHelpCom		TPhelp			ex-command to open the TP QuickHelp screen
+
 ------------------------------------------------------------------------------
 3.2 TP filetype Mapping:
 	Variable			Default Mapping		Description
@@ -153,7 +155,7 @@ intentions to adapt to other OS, but open to forks.
 	g:tpDevRemark			<space>r		remark current line
 	g:tpDevLsClean			<space>ls		remove generated line numbers
 	g:tpDevCompileTp		<F3>			compile current file
-	g:tpDevDataGrep			<space>dg		Search for IO/Data use in a folder
+	g:tpDevDataGrep			<space>xr		Cross reference any IO/Data use in a folder
 ------------------------------------------------------------------------------
 3.3 TpTree filetype Mapping:
 	Variable			Default Mapping		Description
@@ -206,9 +208,13 @@ intentions to adapt to other OS, but open to forks.
  	 "insert real tab
 	imap <c-tab> <c-q><tab>
 
-	"Map tag jumping
-	nmap <cr> <c-]>
-	nmap <c-cr> <c-T>
+	"Tag Jumps except in special windows
+	au FileType * :call TagMap()
+	function! TagMap()
+		if &ft isnot 'qf' && &ft isnot 'nerdtree'
+			nnoremap <buffer> <cr> <c-]>
+			nnoremap <buffer> <c-cr> <c-T>
+		endif
 
 	"VIM internal caps lock <c-^>
 	"TP files default to all caps by default
@@ -228,6 +234,10 @@ intentions to adapt to other OS, but open to forks.
 
 Author: Ben Coady
 Created: 4/19/2017
+	1.3.2	Fixed DataGrep bugs
+
+	1.3.1	Added TP Quickhelp screen
+
 	1.3.0	Added DataGrep function
 
 	1.2.1	Eliminated dependency on autochdir & Hidden

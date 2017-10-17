@@ -4,10 +4,10 @@ A Vim plugin for the Fanuc TP language
 
   TpDev creates a development environment for programming Fanuc robots
 using the TP (teach pendant) language. This includes syntax highlighting,
-code snippets, tags, data commenting, debugging, compiling, and viewing 
-the program call structure. Some features are dependent on 3rd party plugins 
-or software. Some features use the Windows command line. No current 
-intentions to adapt to other OS, but open to forks. 
+code snippets, tags, data commenting, data & IO cross referencing, debugging,
+compiling, and viewing the program call structure. Some features are dependent
+on 3rd party plugins or software. Some features use the Windows command line.
+No current intentions to adapt to other OS, but open to forks. 
 
 ## Installing
 
@@ -63,9 +63,13 @@ intentions to adapt to other OS, but open to forks.
  	 "insert real tab
 	imap <c-tab> <c-q><tab>
 
-	"Map tag jumping
-	nmap <cr> <c-]>
-	nmap <c-cr> <c-T>
+	"Tag Jumps except in special windows
+	au FileType * :call TagMap()
+	function! TagMap()
+		if &ft isnot 'qf' && &ft isnot 'nerdtree'
+			nnoremap <buffer> <cr> <c-]>
+			nnoremap <buffer> <c-cr> <c-T>
+		endif
 
 	"VIM internal caps lock <c-^>
 	"TP files default to all caps by default

@@ -475,13 +475,21 @@ fu! tpDev#DataGrep()
 		else
 			let searchNumber = searchNumberIn
 		endif
-		let searchTerm = searchType . '\[' . searchNumber . '\D'
+		let searchTerm = '\<' . searchType . '\[' . searchNumber . '\D'
 		call inputrestore()
 		cexpr []
+		set wildignore+=logbook.ls
 		execute 'vimgrep /' . searchTerm . '/j **/*.' . ext . ' | cw'
+		set wildignore-=logbook.ls
 	endif
 endfunction
 
+" FUNCTION: QuickHelp {{{2
+fu! tpDev#QuickHelp()
+		execute 'e ' . g:tpDev_path . '\doc\TpQuickHelp.txt'
+		setlocal nomodifiable
+		setlocal nonumber
+endfunction
 " SECTION: Local Functions {{{1
 "============================================================
 " FUNCTION: TreeMain {{{2

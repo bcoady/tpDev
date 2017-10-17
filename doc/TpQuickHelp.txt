@@ -1,0 +1,179 @@
+TP QuickHelp:
+
+	(Type ":TPhelp" to show this screen)
+
+Commands (use in normal mode)
+------------------------------------------------------------------------------
+	Type "<space>xr" to cross reference any IO or Data type in the current folder
+	
+	Type "<space>tp" to find common syntax errors
+	
+	Type "<space>r" to remark/un-remark the current line of code
+	
+	Type "<space>c" to copy the current file to the clipboard
+	
+	Type "<space>p" to paste the file in the clipboard to the current location
+	
+	Press "<F3>" to compile the current file to the bin folder
+	
+	Press "<F5>" to show the TP Program call tree
+	
+	Press "<Enter>" on the name of any called program to jump to it
+	
+	Press "<ctrl-Enter>" to jump back to the calling program
+	
+
+Snippets (use in insert mode, type the snippet then press tab to expand)
+------------------------------------------------------------------------------
+	# MOTION COMMANDS
+	snippet JP
+		:J P[${1}] 
+	snippet JPR
+		:J PR[${1}] 
+	snippet JPF
+		:J P[${1}] ${2:100}% FINE 
+	snippet JPRF
+		:J PR[${1}] ${2:100}% FINE 
+	snippet JPC
+		:J P[${1}] ${2:100}% CNT${3:100} 
+	snippet JPRC
+		:J PR[${1}] ${2:100}% CNT${3:100} 
+	snippet LP
+		:L P[${1}] 
+	snippet LPR
+		:L PR[${1}] 
+	snippet LPF
+		:L P[${1}] ${2:2000}mm/sec FINE 
+	snippet LPRF
+		:L PR[${1}] ${2:2000}mm/sec FINE 
+	snippet LPC
+		:L P[${1}] ${2:2000}mm/sec CNT${3:100} 
+	snippet LPRC
+		:L PR[${1}] ${2:2000}mm/sec CNT${3:100} 
+	snippet AP
+		:A P[${1}] 
+	snippet APR
+		:A PR[${1}] 
+	snippet APF
+		:A P[${1}] ${2:2000}mm/sec FINE 
+	snippet APRF
+		:A PR[${1}] ${2:2000}mm/sec FINE 
+	snippet APC
+		:A P[${1}] ${2:2000}mm/sec CNT${3:100} 
+	snippet APRC
+		:A PR[${1}] ${2:2000}mm/sec CNT${3:100} 
+	snippet CPF
+		:C P[${1}]
+		:  P[${2}] ${3:2000}mm/sec FINE 
+	snippet CPRF
+		:C PR[${1}]
+		:  PR[${2}] ${3:2000}mm/sec FINE 
+	snippet CPC
+		:C P[${1}]
+		:  P[${2}] ${3:2000}mm/sec CNT${4:100} 
+	snippet CPRC
+		:C PR[${1}]
+		:  PR[${2}] ${3:2000}mm/sec CNT${4:100} 
+	snippet MAX
+		max_speed 
+	snippet SPEED
+		${1:2000}mm/sec 
+	snippet VO
+		VOFFSET,VR[${1:1}] 
+	snippet TO
+		Tool_Offset 
+	snippet TOPR
+		Tool_Offset,PR[${1}] 
+	snippet TOC
+		:  TOOL_OFFSET CONDITION PR[${1}];${0}
+	snippet O
+		Offset 
+	snippet OPR
+		Offset,PR[${1}] 
+	snippet OC
+		:  OFFSET CONDITION PR[${1}];${0}
+	snippet AP
+		AP_LD${1:50} 
+	snippet RT
+		RT_LD${1:50} 
+	snippet SKIP
+		SKIP, LBL[${1:404}], PR[${2:30}]=LPOS${0} 
+	# BRANCHING STATEMENTS
+	snippet LBL
+		:  LBL[${1}];${0}
+	snippet JMP
+		:  JMP LBL[${1}];${0}
+	snippet FOR
+		:  FOR R[${1}]=${2} TO ${3};
+		:${0}
+		:  ENDFOR;
+	snippet SELECT
+		:  SELECT R[${1}]=${2},CALL ${3} ;
+		:         =${4},CALL ${5} ;
+		:         ELSE,CALL ${6} ;
+	snippet IFT
+		:  IF (${1}) THEN ;${0}
+		:  ELSE ;
+		:  ENDIF ;
+	snippet IFM
+		:  IF (${1}),${0}
+	snippet IFJ
+		:  IF ${1},JMP LBL[${2}];${0}
+	snippet IFC
+		:  IF ${1},CALL ${2};${0}
+	# FRAMES
+	snippet UF
+		:  UFRAME_NUM=${1};${0}
+	snippet UT
+		:  UTOOL_NUM=${1};${0}
+	# REGISTERS
+	snippet PR
+		:  PR[${1}]=${0}
+	snippet PRN
+		:  PR[${1:}]=PR[$1]-PR[$1];${0}
+	snippet R
+		:  R[${1}]=${0}
+	snippet RN
+		:  R[${1:}]=0;${0}
+	# IO
+	snippet PULSE
+		:  ${1}=PULSE,${2:0.5}sec;${0}
+	# COMMENTS
+	snippet -
+		:  --eg:
+	snippet !
+		:  !${1:Single Line comments max size  |};${0}
+	# NEW HEADING
+	snippet PROG
+		/PROG  ${1:NAME}
+		/ATTR
+		COMMENT		= "${2}";
+		DEFAULT_GROUP	= ${3:1},*,*,*,*;
+		/APPL
+		AUTO_SINGULARITY_HEADER;
+		  ENABLE_SINGULARITY_AVOIDANCE   : TRUE;
+		/MN
+		${0}
+		/POS
+		/END
+	snippet DISP
+		/PROG  ${1:NAME}
+		/ATTR
+		COMMENT		= "${2}";
+		DEFAULT_GROUP	= ${3:1},*,*,*,*;
+		/APPL
+		  DISPENSE : TRUE ; 
+	
+		/MN
+		${0}
+		/POS
+		/END
+	# WAIT COMMANDS
+	snippet W
+		:  WAIT (${1});${0}
+	snippet WS
+		:  WAIT    ${1:1.00}(sec);${0}
+	snippet WTL
+		:  WAIT (${1}) TIMEOUT,LBL[${2}];${0}
+	snippet WT
+		:  $WAITTMOUT=(${1:100});${0}
